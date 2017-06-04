@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test>
+    <db-info>  
+        <driver-name>com.mysql.jdbc.Driver</driver-name>  
+        <url>jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=utf8</url>  
+        <user-name>root</user-name>  
+        <password>root</password>  
+    </db-info>
+	<table name="t_activity">
+		<primarykey>id</primarykey>
+		<foreignkey>student_id</foreignkey>
+		<thirdcol>name</thirdcol>
+	</table>
+	<table name="t_notice">
+		<primarykey>id</primarykey>
+		<secondarycol>student_id</secondarycol>
+		<thirdcol>type</thirdcol>
+	</table>
+	<table name="t_student">
+		<primarykey>id</primarykey>
+		<secondarycol>realName</secondarycol>
+		<thirdcol>zhuanye</thirdcol>
+	</table>
+	<table name="t_teacher">
+		<primarykey>id</primarykey>
+		<secondarycol>realName</secondarycol>
+		<thirdcol>yuanxi</thirdcol>
+	</table>
+	<table name="t_subject">
+		<primarykey>id</primarykey>
+		<secondarycol>name</secondarycol>
+		<thirdcol>position</thirdcol>
+	</table>
+</test>

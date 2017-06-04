@@ -1,0 +1,70 @@
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code,
+	fieldset, legend, input, textarea, p, blockquote, th, td {
+	margin: 0px;
+	padding: 0px;
+}
+.search{
+    position: relative;
+    height: 40px;
+    
+    overflow:hidden;
+    background: #fff;
+    text-align: center;
+    overflow:hidden;
+    padding:4px 20px;
+}
+.search_bar{
+    height: 32px;
+    margin-right:270px;
+    margin-left:300px;
+}
+.search_bar>input{
+    width:80%;
+    display:inline-block;  
+    *display:inline;  
+    border:1px solid #ccc;
+    border-radius:5px;
+    font-size:28px;
+    height:30px;
+    padding:0 10px 0 32px;
+    background-size:32px 32px;
+}
+.search_btn{
+	float:left;
+	height: 30px;
+   
+}
+.search_btn>input{
+    position:absolute;
+    border:1px solid #ccc;
+    border-radius:1px;
+    top:4px;
+    right:367px;
+    z-index:9;
+    line-height:27px;
+    color:green;
+}
+
+.footer {
+    background: #ffffff none repeat scroll 0 0;
+    font-size: 13px;
+    height: 70px;
+    line-height: 1.6;
+    text-align: center;
+}
+.footer-bottom {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+}
+.container {
+    margin: 0 auto;
+    width: 940px;
+}
+
+#content_left {
+    padding-left: 121px;
+    padding-top: 5px;
+    width:800px;
+}

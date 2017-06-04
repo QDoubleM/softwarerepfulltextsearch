@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<repositories>
+	<project id="1001">
+		<name>fulltextsearch</name>
+		<manager>邱敏明</manager>
+		<verson>beta1.0</verson>
+	</project>
+	<project id="1002">
+		<name>fulltextsearch</name>
+		<manager>邱敏明</manager>
+		<verson>beta1.1</verson>
+	</project>
+</repositories>
