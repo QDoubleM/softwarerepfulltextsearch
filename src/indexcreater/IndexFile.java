@@ -36,12 +36,12 @@ public class IndexFile {
 				System.out.println(subFile[i].getName());
 				if (subFile[i].getName().endsWith("doc")){
 					System.out.println("this is a doc");
-					filecontents = new WordExtractor(new FileInputStream(subFile[i])).getText().toString();								
+					filecontents = new WordExtractor(new FileInputStream(subFile[i])).getText().toString().replaceAll("\\s", "");								
 				}				
 				if (subFile[i].getName().endsWith("docx")) 	{
 					System.out.println("this's a docx ");
 					XWPFDocument document = new XWPFDocument(new FileInputStream(subFile[i]));
-				    filecontents = new XWPFWordExtractor(document).getText();
+				    filecontents = new XWPFWordExtractor(document).getText().replaceAll("\\s", "");
 				}		
 				if(filecontents!=null){
 					doc.add(new StringField("filename",subFile[i].getName(),Field.Store.YES));

@@ -1,50 +1,47 @@
 package indexcreater;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.wltea.analyzer.lucene.IKAnalyzer;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+
+import Utils.FieldUtil;
+import Utils.FieldUtilImpl;
+import Utils.XmlAnalyzer;
 
 import fulltextsearch.ConnectDBs;
-import fulltextsearch.XmlAnalyzer;
 
 public class IndexDB {
 	private static Connection conn = null;
 	private static Statement stmt = null;
-
-	private static String indexDir = "E:\\lucene\\";	
-	//private static Analyzer analyzer = new IKAnalyzer(true);
+	private static String indexFilePath = "E:\\lucene\\";
+	
 	public static void main(String args[]) throws Exception{
-		dataIndexInit();
-	}			
-	//获取表名列表	
-	/*public static List<String> getColumns() throws DocumentException, IOException{
-		List<List<String>> tablelist = XmlAnalyzer.getcolumns(XmlAnalyzer.getTables(XmlAnalyzer.getXmlPath()));
-		List<String> tablenamelist = new ArrayList<String>();
-		for(int i=0;i<tablelist.size();i++){
-    		String tablename="";
-    		List<String> columnlist = tablelist.get(i);
-    		tablename=columnlist.get(0);
-    		tablenamelist.add(tablename);
-    	}
-		return tablenamelist;
-	}*/
+		indexPathInit();
+	}				
 	//获取具体表中数据集
-	public static void dataIndexInit() throws Exception{
+	/*public static void dataIndexInit() throws Exception{
 		conn = ConnectDBs.getConnection();
 		IndexWriter indexwriter;
-		List<List<String>> tablelist = XmlAnalyzer.getcolumns(XmlAnalyzer.getTables(XmlAnalyzer.getXmlPath()));
+		List<List<String>> tablelist = XmlAnalyzer.getcolumns(XmlAnalyzer.getTableList(XmlAnalyzer.getXmlPath()));
     	for(int i=0;i<tablelist.size();i++){
     		String columns="";
     		List<String> columnlist = tablelist.get(i);
@@ -78,46 +75,81 @@ public class IndexDB {
 			indexdirectory = indexDir;
 		}
     	conn.close();
-	}
+	}*/
 	
-    /*public static List<Path> indexPathInit() throws DocumentException, IOException{
-    	List<List<String>> tablelist = XmlAnalyzer.getcolumns(XmlAnalyzer.getTables(XmlAnalyzer.getXmlPath()));
-    	List<Path> indexFilePath = new ArrayList<Path>();
-    	for(int i=0;i<tablelist.size();i++){
-    		List<String> columnlist = tablelist.get(i);
-    		String tablename=columnlist.get(0);
-    		String indexdirectory = indexDir+tablename; 
-    		indexFilePath.add(Paths.get(indexdirectory));
-    	}
-    	return indexFilePath;
-    }*/  
-    //索引创建
-   /* public static void indexInit(ResultSet resultSet) throws IOException, SQLException, DocumentException{    	    		
-    	Directory directory=null;
-    	IndexWriter indexwriter=null;
-    	List<Path> indexfilepath = indexPathInit();
-    	Analyzer analyzer = new IKAnalyzer(true);
-		IndexWriterConfig indexwriterconf = new IndexWriterConfig(analyzer);
-		for(Path indexfiliepath:indexfilepath){
-			directory = FSDirectory.open((Path) indexfilepath);
-			indexwriter = new IndexWriter(directory, indexwriterconf);
-			while(resultSet.next()){
-				Document document = new Document();
-				document.add(new StringField("columnname", resultSet.getString("columnname"), Field.Store.YES)); 
-			}
-		}		
-		indexwriter.commit();
-		indexwriter.close();
-		directory.close();
-		conn.close();
-    }  
-    public static void getData() throws SQLException{
-    	conn = ConnectDb.Connect();
-    	String sql = "select t_student.realName from t_student";
+    @SuppressWarnings("static-access")
+	public static void indexPathInit() throws DocumentException, IOException, ClassNotFoundException, SQLException{
+    	conn = ConnectDBs.getConnection();
+    	Analyzer smartAnalyzer = new SmartChineseAnalyzer();
+    	XmlAnalyzer xmlanalyzer = new XmlAnalyzer();
+    	FieldUtil fieldUtil;
+    	FieldUtilImpl fieldUtilImpl = new FieldUtilImpl();
+    	fieldUtil = fieldUtilImpl;
+    	Store storeType = Field.Store.YES;
+		List<Element> tableList = xmlanalyzer.getTableElement(xmlanalyzer.getXmlPath());		
+		//对每个表进行索引
+		
+		for(Element tableElement : tableList){       	
+        	Directory directory = FSDirectory.open(Paths.get(indexFilePath+xmlanalyzer.tableName(tableElement))); 
+        	IndexWriterConfig conf = new IndexWriterConfig(smartAnalyzer);
+			IndexWriter indexwriter = new IndexWriter(directory, conf);
+    		String indexColumns = xmlanalyzer.getIndexColumns(tableElement);
+    		ResultSet resultSet = getResultSet(xmlanalyzer.tableName(tableElement),indexColumns);
+    		  		
+    		Map<String,String> columnType = getColumnType(resultSet);
+    		List<String> storeColumns = xmlanalyzer.getStoreColumns(tableElement);
+    		
+    		while(resultSet.next()){
+    			Document tabledoc = new Document();
+    			tabledoc.add(fieldUtil.textField("tableName", xmlanalyzer.tableName(tableElement), storeType));
+    			for(String columnName : indexColumns.split(",")){
+    				
+    				if(!storeColumns.contains(columnName)){
+        				//分词,使用textfield
+        	    		tabledoc.add(fieldUtil.textField(columnName, resultSet.getString(columnName), storeType));
+        			}else{
+        				//不分词，如果是char类型那就用stringfield,如果是integer那就使用storedfield
+        				if(columnType.get(columnName).toLowerCase().equals("char")||columnType.get(columnName).toLowerCase().equals("varchar")){
+        					tabledoc.add(fieldUtil.stringField(columnName, resultSet.getString(columnName), storeType));
+        				}else{
+        					if(columnType.get(columnName).toLowerCase().equals("integer")){
+        						tabledoc.add(fieldUtil.stringField(columnName, resultSet.getString(columnName),storeType));
+        					}
+        				}
+        			}
+        		}
+        		indexwriter.addDocument(tabledoc);
+    		}
+    		indexwriter.commit();
+    		indexwriter.close();
+    		directory.close();
+        }
+    } 
+     
+    public static ResultSet getResultSet(String tableName,String columns) throws SQLException, ClassNotFoundException{    	
+		String sql = "select "+columns+" from "+tableName;
 		stmt = conn.createStatement();
 		ResultSet resultSet = stmt.executeQuery(sql);
-		while(resultSet.next()){
-			System.out.println(resultSet.getString("t_student.realName"));
-		}
-    }*/
+		System.out.println(resultSet);
+		return resultSet;
+    }
+    
+    //判断字段类型
+    public static Map<String, String> getColumnType(ResultSet resultSet) throws SQLException{
+    	Map<String,String> columnType = new HashMap<String,String>();
+    	ResultSetMetaData resultSetMetaData= resultSet.getMetaData();
+    	if(resultSet.first()){
+    		for(int i=1;i<=resultSetMetaData.getColumnCount();i++){    			
+    			columnType.put(resultSetMetaData.getColumnName(i), resultSetMetaData.getColumnTypeName(i));
+    			System.out.println(resultSetMetaData.getColumnName(i)+ resultSetMetaData.getColumnTypeName(i));
+    		}
+    	}
+    	resultSet.beforeFirst();
+    	
+    	return columnType;
+    }
+    
+    public static void indexType(String dataType){
+    }
+    
 }

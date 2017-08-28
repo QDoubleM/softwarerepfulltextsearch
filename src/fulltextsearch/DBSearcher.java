@@ -12,7 +12,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -49,7 +48,8 @@ public class DBSearcher {
 		SimpleHTMLFormatter simplehtmlfor = new SimpleHTMLFormatter("<b><font color='red'>", "</font></b>");
 		Highlighter highlight = new Highlighter(simplehtmlfor, queryscore);
 		for (ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = searcher.doc(scoreDoc.doc);// 文档的id
+			Document doc = searcher.doc(scoreDoc.doc);
+			
 			String contents = doc.get("id")+","+doc.get("realName");
 			System.out.println("realName:"+contents);
 			//String id = doc.get("id");

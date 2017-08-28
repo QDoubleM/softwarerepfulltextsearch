@@ -8,19 +8,18 @@ import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 
 public class MultiThreadSearch implements Runnable{
 	private String searchContent;
-	List<String> fileResult = null;
+	List<FileInfo> fileResult = null;
 	List<String> dbResult = null;
 	FileSearcher filesearcher = new FileSearcher();
 	DBSearcher dbsearcher = new DBSearcher();
 	public void setName(String searchContent) 
 	{ 
-	this.searchContent = searchContent; 
+		this.searchContent = searchContent; 
 	} 
+	@SuppressWarnings("static-access")
 	@Override
 	public void run() {
-		String range = Thread.currentThread().getName();
-		//System.out.println(Thread.currentThread().getName() + searchContent);
-		try {
+		String range = Thread.currentThread().getName();try {
 			if (range.equals("localFile")) {
 				fileResult = filesearcher.searcherimpl(searchContent);
 				System.out.println("一共有"+fileResult.size()+"条记录来自本地文件");
@@ -42,6 +41,5 @@ public class MultiThreadSearch implements Runnable{
 		st.setName(searchContent);
 		new Thread(st, "localFile").start();
 		new Thread(st, "DB").start();
-		//new Thread(st, "GitRep").start();
 	}
 }

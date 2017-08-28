@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import Utils.JdbcConfig;
+import Utils.XmlAnalyzer;
+
 public class ConnectDBs {
 	XmlAnalyzer xmlanalyzer = new XmlAnalyzer();
 	public static Connection getConnection() throws ClassNotFoundException  

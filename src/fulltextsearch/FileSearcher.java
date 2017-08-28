@@ -27,9 +27,12 @@ import org.apache.lucene.store.FSDirectory;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 public class FileSearcher {
-	public List<String> searcherimpl(String q) throws IOException, ParseException, InvalidTokenOffsetsException{
+	
+	public List<FileInfo> searcherimpl(String q) throws IOException, ParseException, InvalidTokenOffsetsException{
+		//SearchHelper searchHelper = null;
+		//searchHelper.queryPaser(q);
 		String indexDir = "E:\\lucene\\fileindex";
-		List<String> resultlist=new ArrayList<String>();
+		List<FileInfo> resultlist=new ArrayList<>();
 		Directory dir= FSDirectory.open(Paths.get(indexDir));
 		IndexReader reader = DirectoryReader.open(dir);
 		long start = System.currentTimeMillis();
@@ -41,20 +44,22 @@ public class FileSearcher {
 		long end = System.currentTimeMillis();
 		System.out.println("匹配"+q+",总共花费"+(end-start)+"毫秒"+"查询到"+hits.totalHits+"条记录");
 		
-		//QueryScorer queryscore = new QueryScorer(query);//显示得分较高的片段
-		//Fragmenter fragmenter = new SimpleFragmenter(100);
-		//SimpleHTMLFormatter simplehtmlfor = new SimpleHTMLFormatter("<b><font color='red'>","</font></b>");
-		//Highlighter highlight = new Highlighter(simplehtmlfor, queryscore);
-	   // highlight.setTextFragmenter(fragmenter);
+		QueryScorer queryscore = new QueryScorer(query);//显示得分较高的片段
+		Fragmenter fragmenter = new SimpleFragmenter(100);
+		SimpleHTMLFormatter simplehtmlfor = new SimpleHTMLFormatter("","");
+		Highlighter highlight = new Highlighter(simplehtmlfor, queryscore);
+	    highlight.setTextFragmenter(fragmenter);
 	    
 		for(ScoreDoc scoreDoc:hits.scoreDocs){
-			Document doc = indexsearcher.doc(scoreDoc.doc);//文档的id
-			System.out.println("文件路径"+doc.get("filepath"));
+			FileInfo fileInfo = new FileInfo();
+			Document doc = indexsearcher.doc(scoreDoc.doc);
 			String contents = doc.get("filecontents");
-			String filename = doc.get("filename");
-			if(filename!=null){
-				TokenStream tokenStream = analyzer.tokenStream("contents", new StringReader(contents)); 
-				resultlist.add(filename);
+			fileInfo.setFileName(doc.get("filename"));
+			fileInfo.setFilePath(doc.get("filepath"));
+			if(contents!=null){
+				TokenStream tokenStream = analyzer.tokenStream("contents", new StringReader(contents)); 				
+				fileInfo.setFileContent(highlight.getBestFragment( tokenStream, contents));
+				resultlist.add(fileInfo);
 			}
 		}
 		reader.close();

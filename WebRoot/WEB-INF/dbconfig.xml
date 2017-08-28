@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataBase>
+	<db-info>
+		<driver-name>com.mysql.jdbc.Driver</driver-name>
+		<url>jdbc:mysql://localhost:3306/test?useUnicode=true&amp;characterEncoding=utf8</url>
+		<user-name>root</user-name>
+		<password>root</password>
+	</db-info>
+	<table name="t_activity" primaryKey="id">
+		<indexfield>
+			<name>name</name>
+			<text>获奖情况</text>
+		</indexfield>
+		<indexfield>
+			<name>biaoxian</name>
+			<text>表现</text>
+		</indexfield>
+		<storecolumn>biaoxian</storecolumn>
+	</table>
+	<table name="t_student" primaryKey="id">
+		<indexfield>
+			<name>realName</name>
+			<text>学生姓名</text>
+		</indexfield>
+		 <indexfield>
+			<name>zhuanye</name>
+			<text>专业名称</text>
+		</indexfield>
+		<storecolumn>id,zhuanye</storecolumn>
+	</table>
+	<table name="t_teacher" primaryKey="id">
+		<indexfield>
+			<name>realName</name>
+			<text>老师姓名</text>
+		</indexfield>
+		<indexfield>
+			<name>yuanxi</name>
+			<text>院系</text>
+		</indexfield>
+		<storecolumn>id,yuanxi</storecolumn>
+	</table>
+	<table name="t_subject" primaryKey="id">
+		<indexfield>
+			<name>name</name>
+			<text>课程名称</text>
+		</indexfield>
+		<indexfield>
+			<name>position</name>
+			<text>上课地点</text>
+		</indexfield>
+		<storecolumn>id,name,position</storecolumn>
+	</table>
+</DataBase>
