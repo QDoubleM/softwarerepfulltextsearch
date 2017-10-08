@@ -8,5 +8,7 @@ public interface FieldUtil {
 	public IndexableField varCharOrChar(String fieldName,String fieldValue,Store storeType);
 	public IndexableField stringField(String fieldName,String fieldValue,Store storeType);
 	public IndexableField storedField(String fieldName,String fieldValue);
-	public IndexableField textField(String fieldName,String fieldValue,Store storeType);
+	public IndexableField textField(String fieldName,String fieldValue,Store storeType);	
+	public IndexableField intField(String fieldName, int fieldValue, Store storeType);
+	public IndexableField longField(String fieldName, long fieldValue, Store storeType);
 }

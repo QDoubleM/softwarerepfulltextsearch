@@ -36,8 +36,6 @@ public class DBSearcher {
 		IndexReader reader = DirectoryReader.open(directory);
 		long start = System.currentTimeMillis();
 		IndexSearcher searcher = new IndexSearcher(reader);
-		//QueryParser parser = new QueryParser("realName",analyzer);
-		//Query query = parser.parse(queryStr);
 		Term term = new Term("realName", queryStr);
 		Query termQuery = new TermQuery(term);
 		TopDocs hits = searcher.search(termQuery, 100);// 10是查询前10条数据
@@ -52,8 +50,6 @@ public class DBSearcher {
 			
 			String contents = doc.get("id")+","+doc.get("realName");
 			System.out.println("realName:"+contents);
-			//String id = doc.get("id");
-			//System.out.println(id);
 			if (contents != null) {
 				TokenStream tokenStream = analyzer.tokenStream("realName",new StringReader(contents));
 				resultlist.add(contents);

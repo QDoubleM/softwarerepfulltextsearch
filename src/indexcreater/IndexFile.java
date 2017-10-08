@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Paths;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -23,7 +25,6 @@ public class IndexFile {
 	int mergeFactor = 10;
     int minMergeDocs = 10;
     int maxMergeDocs = Integer.MAX_VALUE;
-	@SuppressWarnings("resource")
 	public void recursion(String root) throws Exception {
 		File[] subFile = new File(root).listFiles();
 		for (int i = 0; i < subFile.length; i++) {
@@ -35,11 +36,9 @@ public class IndexFile {
 				String filecontents = null;
 				System.out.println(subFile[i].getName());
 				if (subFile[i].getName().endsWith("doc")){
-					System.out.println("this is a doc");
 					filecontents = new WordExtractor(new FileInputStream(subFile[i])).getText().toString().replaceAll("\\s", "");								
 				}				
 				if (subFile[i].getName().endsWith("docx")) 	{
-					System.out.println("this's a docx ");
 					XWPFDocument document = new XWPFDocument(new FileInputStream(subFile[i]));
 				    filecontents = new XWPFWordExtractor(document).getText().replaceAll("\\s", "");
 				}		
@@ -54,10 +53,10 @@ public class IndexFile {
 	}
 	
 	public IndexFile(String indexDir)throws Exception{
-		Directory dir = FSDirectory.open(Paths.get(indexDir));		
-		//Analyzer analyzer = new StandardAnalyzer();//标准分词器
-		IKAnalyzer analyzer = new IKAnalyzer(true);
-		IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+		Directory dir = FSDirectory.open(Paths.get(indexDir));	
+		//IKAnalyzer analyzer = new IKAnalyzer(true);
+		Analyzer smartAnalyzer = new SmartChineseAnalyzer();
+		IndexWriterConfig iwc = new IndexWriterConfig(smartAnalyzer);
 		indexwriter = new IndexWriter(dir,iwc);
 	}
 	

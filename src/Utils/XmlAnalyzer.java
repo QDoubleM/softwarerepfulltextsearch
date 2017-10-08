@@ -116,8 +116,7 @@ public class XmlAnalyzer {
 		return columnsObjList;
 	}
 	
-	public static Map<String, List> columnTableMap(String tableName) throws DocumentException, IOException{
-		Document document = null;
+	public Map<String, List> columnTableMap(String tableName) throws DocumentException, IOException{
 		List<Element> tableList = getTableElement(getXmlPath());
 		Map<String, List> tablemap = new HashMap<String,List>();
 		for(Element tableElement : tableList){

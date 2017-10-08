@@ -7,7 +7,7 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 
 
 public class FileMonitor {
-	 public static void FileListenter() throws Exception{
+	 public void FileListenter() throws Exception{
 	        String rootDir = "E:\\findfile";
 	        long interval = TimeUnit.SECONDS.toMillis(1);
 	        FileAlterationObserver observer = new FileAlterationObserver(rootDir);

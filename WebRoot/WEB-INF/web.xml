@@ -9,6 +9,9 @@
     <servlet-name>FullTextSearch</servlet-name>
     <url-pattern>/FullTextSearch/*</url-pattern>
   </servlet-mapping>
+  <listener>
+    <listener-class>fulltextsearch.MyListener</listener-class>
+  </listener>
   <welcome-file-list>
     <welcome-file>search-index.html</welcome-file>
   </welcome-file-list>

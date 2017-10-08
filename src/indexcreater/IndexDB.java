@@ -23,11 +23,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
+import Utils.ConnectDBs;
 import Utils.FieldUtil;
 import Utils.FieldUtilImpl;
 import Utils.XmlAnalyzer;
 
-import fulltextsearch.ConnectDBs;
 
 public class IndexDB {
 	private static Connection conn = null;

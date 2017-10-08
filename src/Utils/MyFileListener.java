@@ -5,6 +5,7 @@ import indexcreater.IndexFileHandler;
 import indexcreater.IndexUpdateUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
@@ -13,21 +14,16 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 
 public class MyFileListener extends FileAlterationListenerAdaptor {
-	IndexUpdateUtil indexUpdateUtil;
-	//NearRealTimeSearch nrtSearch;
 	 @Override  
 	    public void onFileCreate(File file) {  
 	        System.out.println("[新建]:" + file.getAbsolutePath()); 
-	        //NearRealTimeSearch nrtSearch = new NearRealTimeSearch();
-	        /*try {
-	        	IndexFileHandler indexFile = new IndexFileHandler();
-	        	IndexUpdateUtil indexUpdate = new IndexUpdateUtil();
-	        	indexUpdate.addDocument(file);
-	    		
-				//nrtSearch.addDocument(file);
+	        NearRealTimeSearch nrtSearch = new NearRealTimeSearch();	       
+	        try {
+				nrtSearch.addDocument(file);
+				nrtSearch.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}*/
+			}
 	    }  
 	 
 	    //文件内容改变
@@ -35,21 +31,19 @@ public class MyFileListener extends FileAlterationListenerAdaptor {
 	    public void onFileChange(File file) {  
 	        System.out.println("[修改]:" + file.getAbsolutePath());
 	        NearRealTimeSearch nrtSearch = new NearRealTimeSearch();
-	        nrtSearch.updateDocument();
-	    }  
-	    
-	    
-	    @Override  
-	    public void onFileDelete(File file) {  
-	        //删除索引
 	        try {
-	        	/*NearRealTimeSearch nrtSearch = new NearRealTimeSearch();
-	        	System.out.println("run?");
-	        	nrtSearch.deleteDocument(file);*/
-	        	indexUpdateUtil = new IndexUpdateUtil();
-	        	indexUpdateUtil.deleteDocument(file);
+				nrtSearch.updateDocument(file);
+				nrtSearch.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+	    }  
+	    
+	    //删除索引
+	    @Override  
+	    public void onFileDelete(File file) {  
+	    	NearRealTimeSearch nrtSearch = new NearRealTimeSearch();
+	        nrtSearch.deleteDocument(file);	 
+			nrtSearch.close();
 	    } 
 }

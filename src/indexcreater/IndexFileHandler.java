@@ -14,12 +14,31 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import Utils.FieldUtil;
 import Utils.FieldUtilImpl;
-import Utils.IndexUtil;
 
 public class IndexFileHandler {
 
-	IndexUtil indexUtil = new IndexUtil();
+	//IndexUtil indexUtil = new IndexUtil();
 	private FieldUtil fieldUtil;
+	
+	public Document getDocument(File file) throws FileNotFoundException, IOException{
+		Document doc = new Document();
+		String filecontents = null;
+		FieldUtil fieldUtil;
+		fieldUtil = new FieldUtilImpl();
+		if (file.getName().endsWith("doc")){
+			filecontents = new WordExtractor(new FileInputStream(file)).getText().toString().replaceAll("\\s", "");								
+		}				
+		else if (file.getName().endsWith("docx")) 	{
+			XWPFDocument document = new XWPFDocument(new FileInputStream(file));
+		    filecontents = new XWPFWordExtractor(document).getText().replaceAll("\\s", "");
+		}		
+		if(filecontents!=null){
+			doc.add(fieldUtil.stringField("filepath", file.getAbsolutePath(), Field.Store.YES));
+			doc.add(fieldUtil.stringField("filename", file.getName(), Field.Store.YES));
+			doc.add(fieldUtil.textField("filecontents", filecontents, Field.Store.YES));
+		}
+		return doc;
+	}
 	/**
 	 * 对单个文件进行索引
 	 */
