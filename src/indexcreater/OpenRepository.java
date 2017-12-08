@@ -2,7 +2,6 @@ package indexcreater;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.jgit.api.Git;
@@ -23,6 +22,7 @@ import org.eclipse.jgit.treewalk.filter.PathFilter;
 
 public class OpenRepository {
 	
+	@SuppressWarnings("unused")
 	public static Repository openRepository() throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Git git = Git.open(new File("E:/git仓库/.git"));

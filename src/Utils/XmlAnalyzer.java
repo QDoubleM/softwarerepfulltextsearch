@@ -2,30 +2,22 @@ package Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-
-
 public class XmlAnalyzer {
-	static JdbcConfig jdbcconfig = new JdbcConfig();
+    static JdbcConfig jdbcconfig = new JdbcConfig();
 
-	public static String getXmlPath() {
+	public static  String getXmlPath() {
 		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 		path = path.replace("file:", ""); // 去掉file:
 		path = path.replace("classes/", ""); // 去掉class\
@@ -49,7 +41,7 @@ public class XmlAnalyzer {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Element> getTableElement(String filepath)throws DocumentException {				
+	public List<Element> getTableElement(String filepath)throws DocumentException {				
 		SAXReader reader = new SAXReader();
 		org.dom4j.Document document = reader.read(new File(filepath));
 		
@@ -57,13 +49,13 @@ public class XmlAnalyzer {
 		return tableElementList;
 	}
 	
-	public static String tableName(Element tableElement) {
+	public String tableName(Element tableElement) {
 		String tableName = tableElement.attribute("name").getText();
 		return tableName;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static String getIndexColumns(Element tableNode) throws IOException {
+	public String getIndexColumns(Element tableNode) throws IOException {
 		String columns = "";
 		Attribute primaryKeyAttr = tableNode.attribute("primaryKey");
 		columns = primaryKeyAttr.getText();
@@ -79,14 +71,14 @@ public class XmlAnalyzer {
 		return columns;
 	}
 
-	public static List<String> getStoreColumns(Element tableNode) throws IOException{		
+	public List<String> getStoreColumns(Element tableNode) throws IOException{		
 		String[] storeColumnArray = tableNode.element("storecolumn").getText().split(",");
 		List<String> storeColumnList=Arrays.asList(storeColumnArray);
 		return storeColumnList;
 	} 
-	
-	@SuppressWarnings("null")
-	public static List<TableColumns> columnsObjectList(Element tableNode) throws IOException{
+		
+	@SuppressWarnings("unchecked")
+	public List<TableColumns> columnsObjectList(Element tableNode) throws IOException{
 		List<String> storeColumnList = getStoreColumns(tableNode);	
 		List<Element> fieldList = tableNode.elements("indexfield");		
 		String primaryKey = tableNode.attribute("primaryKey").getText();
@@ -116,6 +108,7 @@ public class XmlAnalyzer {
 		return columnsObjList;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public Map<String, List> columnTableMap(String tableName) throws DocumentException, IOException{
 		List<Element> tableList = getTableElement(getXmlPath());
 		Map<String, List> tablemap = new HashMap<String,List>();

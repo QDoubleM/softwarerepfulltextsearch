@@ -25,16 +25,28 @@ public class NRTManager {
 	private TrackingIndexWriter trackingIndexWriter;
 	private ReferenceManager<IndexSearcher> reManager = null;// 类似于Lucene3.x中的NrtManager
 	private ControlledRealTimeReopenThread<IndexSearcher> conRealTimeOpenThread = null;
+	
+	private static NRTManager nrtManager = null ;
+	public static  NRTManager getNRTManager(){
+		if(nrtManager == null)
+			nrtManager = new NRTManager();
+		return nrtManager;
+	}
 	/**
 	 * 每个索引目录都只有一个IndexWriter
 	 * @return 
+	 * @throws InterruptedException 
 	 * */
-	public IndexWriter getindexWriter(String path) throws IOException{
+	@SuppressWarnings("deprecation")
+	public IndexWriter getindexWriter(String path) throws IOException, InterruptedException{
 		Map<String,IndexWriter> indexWriterMap = new HashMap<String,IndexWriter>();
 		smartAnalyzer = new SmartChineseAnalyzer();
 		indexWriterConfig = new IndexWriterConfig(smartAnalyzer);
 		Directory directory = FSDirectory.open(Paths.get("E:\\lucene\\fileindex"));
 		if(! indexWriterMap.containsKey(path)){
+			while (IndexWriter.isLocked(directory)){
+				Thread.sleep(1000);
+			}
 			writer = new IndexWriter(directory, indexWriterConfig);
 			indexWriterMap.put(path, writer);
 		}else{
@@ -80,7 +92,7 @@ public class NRTManager {
 		}
 	}
 	
-	public void close(){
+	public void threadClose(){
 		conRealTimeOpenThread.interrupt();
 		conRealTimeOpenThread.close();
 	}

@@ -18,7 +18,7 @@ import Utils.FieldUtilImpl;
 public class IndexFileHandler {
 
 	//IndexUtil indexUtil = new IndexUtil();
-	private FieldUtil fieldUtil;
+	//private FieldUtil fieldUtil;
 	
 	public Document getDocument(File file) throws FileNotFoundException, IOException{
 		Document doc = new Document();

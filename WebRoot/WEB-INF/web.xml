@@ -3,11 +3,11 @@
   <display-name></display-name>
   <servlet>
     <servlet-name>FullTextSearch</servlet-name>
-    <servlet-class>fulltextsearch.FullTextSearch</servlet-class>
+    <servlet-class>fulltextsearch.FullTextSearchMaster</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>FullTextSearch</servlet-name>
-    <url-pattern>/FullTextSearch/*</url-pattern>
+    <url-pattern>/FullTextSearchMaster/*</url-pattern>
   </servlet-mapping>
   <listener>
     <listener-class>fulltextsearch.MyListener</listener-class>

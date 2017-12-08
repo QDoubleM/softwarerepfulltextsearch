@@ -37,45 +37,6 @@ public class IndexDB {
 	public static void main(String args[]) throws Exception{
 		indexPathInit();
 	}				
-	//获取具体表中数据集
-	/*public static void dataIndexInit() throws Exception{
-		conn = ConnectDBs.getConnection();
-		IndexWriter indexwriter;
-		List<List<String>> tablelist = XmlAnalyzer.getcolumns(XmlAnalyzer.getTableList(XmlAnalyzer.getXmlPath()));
-    	for(int i=0;i<tablelist.size();i++){
-    		String columns="";
-    		List<String> columnlist = tablelist.get(i);
-    		String tablename=columnlist.get(0);
-    		for(int j=1;j<columnlist.size();j++){
-    			columns = columns + "," +columnlist.get(j);
-    		}
-    		columns = columns.substring(1);
-    		String sql = "select "+columns+" from "+tablename;
-    		stmt = conn.createStatement();
-    		ResultSet resultSet = stmt.executeQuery(sql);//获取表的结果集    		
-    		//开始建立索引
-    		String indexdirectory = indexDir + tablename;						
-			Analyzer analyzer = new IKAnalyzer(true);   
-
-			Directory directory = FSDirectory.open(Paths.get(indexdirectory));
-			IndexWriterConfig conf = new IndexWriterConfig(analyzer);
-			indexwriter = new IndexWriter(directory, conf);
-			while (resultSet.next()) {
-				Document tabledoc = new Document();
-				for (int j = 1; j < columnlist.size(); j++) {
-					tabledoc.add(new StringField(columnlist.get(j), resultSet.getString(columnlist.get(j)), Field.Store.YES));
-					System.out.println(columnlist.get(j)+":"+resultSet.getString(columnlist.get(j)));
-					
-				}
-				indexwriter.addDocument(tabledoc);
-			}
-			indexwriter.commit();
-			indexwriter.close();
-			directory.close();
-			indexdirectory = indexDir;
-		}
-    	conn.close();
-	}*/
 	
     @SuppressWarnings("static-access")
 	public static void indexPathInit() throws DocumentException, IOException, ClassNotFoundException, SQLException{

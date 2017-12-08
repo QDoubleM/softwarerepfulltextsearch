@@ -1,7 +1,6 @@
 package indexcreater;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -17,7 +16,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
 public class IndexFile {
 	

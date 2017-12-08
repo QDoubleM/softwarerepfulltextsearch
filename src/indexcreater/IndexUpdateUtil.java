@@ -65,9 +65,5 @@ public class IndexUpdateUtil {
 		fsdIndexWriter.commit();
 		fsdIndexWriter.close();
 	}
-	/*public static void main(String[] args) throws IOException{
-		File file = new File("E:/findfile/gaigemingzikankan/毕业生户档转回生源地的申请表--邱敏明.doc");
-		deleteDocument(file);
-	}*/
 }
 
