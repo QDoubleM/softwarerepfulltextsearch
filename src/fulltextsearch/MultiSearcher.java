@@ -13,6 +13,7 @@ import org.apache.lucene.index.MultiReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -20,17 +21,20 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.dom4j.DocumentException;
+
+import Utils.SearchUtil;
 
 public class MultiSearcher {//多索引目录搜索
 	private String indexDirectory = "E:/lucene/";
 	private Map<String,IndexReader> previousReaders =null;
 	
-	public static void main(String args[]) throws IOException, ParseException{
-		MultiSearchHelp("lucene");
+	public static void main(String args[]) throws IOException, ParseException, DocumentException{
+		MultiSearchHelp("t_activity 获奖情况:创新杯;表现:B;id:15;|t_student 学生姓名:李苏兴;id:1|");
+		//MultiSearchHelp("docker");
 	}
 	public void createDirectoryReader(String[] indexFilesName){
 		Directory fsDirectory;
-		
 		IndexReader previousReaders[] = null;
 		try {
 			if(indexFilesName.length == 1){
@@ -47,13 +51,14 @@ public class MultiSearcher {//多索引目录搜索
 		}
 	}
 	
-	public static void MultiSearchHelp(String queryContent) throws IOException, ParseException{
+	public static void MultiSearchHelp(String queryContent) throws IOException, ParseException, DocumentException{
+		SearchUtil searchUtil = new SearchUtil();
 		
 		String indexDir = "E:/lucene/fileindex";
 		Directory dir= FSDirectory.open(Paths.get(indexDir));
-		String indexDir1 = "E:/lucene/fileindex";
+		String indexDir1 = "E:/lucene/t_activity";
 		Directory dir1= FSDirectory.open(Paths.get(indexDir1));
-		String indexDir2 = "E:/lucene/fileindex";
+		String indexDir2 = "E:/lucene/t_student";
 		Directory dir2= FSDirectory.open(Paths.get(indexDir2));
 		DirectoryReader reader1 = DirectoryReader.open(dir);
 		DirectoryReader reader2 = DirectoryReader.open(dir1);
@@ -67,15 +72,16 @@ public class MultiSearcher {//多索引目录搜索
 		MultiReader multiReader = new MultiReader(i1,i2,i3);
 		long start = System.currentTimeMillis();
 		IndexSearcher indexsearcher = new IndexSearcher(multiReader);
-		QueryParser parser = new QueryParser("filecontents",smartAnalyzer);
-		Query query = parser.parse(queryContent);
-		/*Term term = new Term("student_id", q);
-		Query termQuery = new TermQuery(term);*/
-		TopDocs hits = indexsearcher.search(query, 10);//10是查询前10条数据
+		
+		//QueryParser parser = new QueryParser("filecontents",smartAnalyzer);
+		//Query query = parser.parse(queryContent);
+		//TopDocs hits = indexsearcher.search(query, 10);//10是查询前10条数据
+		BooleanQuery.Builder booleanQuery = searchUtil.multiTableSearch(queryContent);
+		TopDocs hits = indexsearcher.search(booleanQuery.build(), 100);
 		long end = System.currentTimeMillis();
 		System.out.println("匹配"+queryContent+",总共花费"+(end-start)+"毫秒"+"查询到"+hits.totalHits+"条记录");
-		for(ScoreDoc scoredoc:hits.scoreDocs){
+		/*for(ScoreDoc scoredoc:hits.scoreDocs){
 			System.out.println(indexsearcher.doc(scoredoc.doc).get("filecontents"));
-		}
+		}*/
 	}
 }

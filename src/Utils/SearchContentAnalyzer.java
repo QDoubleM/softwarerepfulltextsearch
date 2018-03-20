@@ -10,7 +10,6 @@ public class SearchContentAnalyzer {
 	 * @return 
 	 */
 	public List<SearchContent> tableContentHandler(String content){
-		
 		StringHandlerUtil stringHandler = new StringHandlerUtil();
 		content = stringHandler.removeEndCharacter(content);//移除最后一个无用的“|”
 		String[] contentArray = stringHandler.String2Array(content, "\\|");//将接收到的内容进行切分“|”；分成多个表
@@ -26,5 +25,14 @@ public class SearchContentAnalyzer {
 			searchContentList.add(searchContent);
 		}
 		return searchContentList;
+	}
+	
+	public void getQueryedColumns(String content){
+		StringHandlerUtil stringHandler = new StringHandlerUtil();
+		String[] contentArray = stringHandler.String2Array(content, ";");
+		List<String> queryColumnList = new ArrayList<String>();
+		for(int i=0;i<contentArray.length;i++){
+			queryColumnList.add(contentArray[i].split(":")[0]);
+		}
 	}
 }

@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.google.code.or.OpenReplicator;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class OpenReplicatorTest {
 	    private static final Logger logger = LoggerFactory.getLogger(OpenReplicatorTest.class);
@@ -49,11 +51,13 @@ public class OpenReplicatorTest {
 	            while(true){
 	                if(CDCEventManager.queue.isEmpty() == false)
 	                {
-	                    CDCEvent ce = CDCEventManager.queue.pollFirst();
-	                    CDCEventManager.queue.pollLast();
+	                    //CDCEvent ce = CDCEventManager.queue.pollFirst();
+	                    //CDCEventManager.queue.pollLast();
 	                    Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
-	                    String prettyStr1 = gson.toJson(CDCEventManager.queue.pollLast());
-	                    System.out.println(prettyStr1); 
+	                    String pretty = gson.toJson(CDCEventManager.queue.pollLast()).toString();
+	                    //System.out.println("prettyStr1:"+pretty); 
+	                    JsonObject returnData = new JsonParser().parse(pretty).getAsJsonObject();
+	                    //System.out.println("++++++"+returnData.get("before"));
 	                }
 	                else{
 	                    try {

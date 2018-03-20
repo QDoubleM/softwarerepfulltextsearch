@@ -3,7 +3,6 @@
 		$('input:eq(0)').on('keypress', function(event) {
 		    if (event.keyCode == 13) {
 		       var searchrange = getSearchRange();
-		       alert(searchrange);
 		       search("");
 		    }
 		});

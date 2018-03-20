@@ -32,6 +32,7 @@ public class FullTextSearchMaster extends ServletMaster {
 	private static final long serialVersionUID = 1L;
     FileSearcher filesearcher = new FileSearcher();
     
+    
     DBSearcher dbsearcher = new DBSearcher();
     JSONArray jsonArray;
 
@@ -64,24 +65,12 @@ public class FullTextSearchMaster extends ServletMaster {
 	
 	//针对某张表或者几张做检索
 	public void dbSearcher(HttpServletRequest request,HttpServletResponse response) throws Exception{
-		String searchContents = request.getParameter("searchcon");//content形式：name:邱敏明		
-		StringHandlerUtil stringHandlerUltil = new StringHandlerUtil(); 
-		/*searchContents = stringHandlerUltil.removeEndCharacter(searchContents);
-		
-		String[] resultArray = stringHandlerUltil.String2Array(searchContents, "\\|"); 
-		for(int i=0;i<resultArray.length;i++){
-			String content = resultArray[i];
-			boolean result = stringHandlerUltil.isEndCharacter(content, ";");
-			//String lastchar = content.substring(content.length()-1);
-			System.out.println("最后一个是否是进行分割的字符"+result);
-		}*/
-		//SearchUtil searchUtil = new SearchUtil();
+		String searchContents = request.getParameter("searchcon");//content形式：name:邱敏明
+		System.out.println(searchContents);
 		SearchThreadPool multiTreadSearch = new SearchThreadPool();
 		SearchContentAnalyzer searchContentAnalyzer = new SearchContentAnalyzer();
-		multiTreadSearch.setSearchContentList(searchContentAnalyzer.tableContentHandler(searchContents));
-		
+		multiTreadSearch.setSearchContentList(searchContentAnalyzer.tableContentHandler(searchContents));		
 		multiTreadSearch.exec();
-		//searchUtil.searchTable(tableName, searchContents);
 	}
 	
 	//获取数据表名

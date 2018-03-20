@@ -12,12 +12,13 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
 public class XmlAnalyzer {
     static JdbcConfig jdbcconfig = new JdbcConfig();
 
-	public static  String getXmlPath() {
+	public static String getXmlPath() {
 		String path = Thread.currentThread().getContextClassLoader().getResource("").getPath();
 		path = path.replace("file:", ""); // 去掉file:
 		path = path.replace("classes/", ""); // 去掉class\
@@ -49,13 +50,24 @@ public class XmlAnalyzer {
 		return tableElementList;
 	}
 	
+	//根据表名获取xml节点
+	@SuppressWarnings("unchecked")
+	public static Element getElementByName(String tableName) throws DocumentException{
+		SAXReader reader = new SAXReader();
+		org.dom4j.Document document = reader.read(new File(getXmlPath()));
+		Node root = document.selectSingleNode("/DataBase");		
+		List<Element> element = root.selectNodes("table[@name='"+tableName+"']");
+		Element tableElement = element.get(0);
+		return tableElement;
+	}
+	
 	public String tableName(Element tableElement) {
 		String tableName = tableElement.attribute("name").getText();
 		return tableName;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public String getIndexColumns(Element tableNode) throws IOException {
+	public static String getIndexColumns(Element tableNode) throws IOException {
 		String columns = "";
 		Attribute primaryKeyAttr = tableNode.attribute("primaryKey");
 		columns = primaryKeyAttr.getText();
@@ -70,8 +82,15 @@ public class XmlAnalyzer {
 		}
 		return columns;
 	}
+	
+	public String getPrimaryKey(Element tableNode){
+		String primaryKey = "";
+		Attribute primaryKeyAttr = tableNode.attribute("primaryKey");
+		primaryKey = primaryKeyAttr.getText();
+		return primaryKey;
+	}
 
-	public List<String> getStoreColumns(Element tableNode) throws IOException{		
+	public static List<String> getStoreColumns(Element tableNode) throws IOException{		
 		String[] storeColumnArray = tableNode.element("storecolumn").getText().split(",");
 		List<String> storeColumnList=Arrays.asList(storeColumnArray);
 		return storeColumnList;

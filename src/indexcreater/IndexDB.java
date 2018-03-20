@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import openreplicator.ColumnInfo;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
@@ -64,7 +66,6 @@ public class IndexDB {
     			Document tabledoc = new Document();
     			tabledoc.add(fieldUtil.textField("tableName", xmlanalyzer.tableName(tableElement), storeType));
     			for(String columnName : indexColumns.split(",")){
-    				
     				if(!storeColumns.contains(columnName)){
         				//分词,使用textfield
         	    		tabledoc.add(fieldUtil.textField(columnName, resultSet.getString(columnName), storeType));
@@ -91,7 +92,6 @@ public class IndexDB {
 		String sql = "select "+columns+" from "+tableName;
 		stmt = conn.createStatement();
 		ResultSet resultSet = stmt.executeQuery(sql);
-		System.out.println(resultSet);
 		return resultSet;
     }
     
@@ -101,16 +101,48 @@ public class IndexDB {
     	ResultSetMetaData resultSetMetaData= resultSet.getMetaData();
     	if(resultSet.first()){
     		for(int i=1;i<=resultSetMetaData.getColumnCount();i++){    			
-    			columnType.put(resultSetMetaData.getColumnName(i), resultSetMetaData.getColumnTypeName(i));
-    			System.out.println(resultSetMetaData.getColumnName(i)+ resultSetMetaData.getColumnTypeName(i));
+    			columnType.put(resultSetMetaData.getColumnName(i), resultSetMetaData.getColumnTypeName(i));   			
     		}
     	}
     	resultSet.beforeFirst();
-    	
     	return columnType;
     }
     
-    public static void indexType(String dataType){
+    public void incrementalUpdate(List<ColumnInfo> columns,Element tableElement){
+    	XmlAnalyzer xmlanalyzer = new XmlAnalyzer();
+    	Analyzer smartAnalyzer = new SmartChineseAnalyzer();
+    	FieldUtil fieldUtil;
+    	FieldUtilImpl fieldUtilImpl = new FieldUtilImpl();
+    	fieldUtil = fieldUtilImpl;
+    	Store storeType = Field.Store.YES;
+    	try {
+    		Directory directory = FSDirectory.open(Paths.get(indexFilePath+xmlanalyzer.tableName(tableElement))); 
+        	IndexWriterConfig conf = new IndexWriterConfig(smartAnalyzer);
+    		IndexWriter indexwriter = new IndexWriter(directory, conf);
+			List<String> storeColumns = xmlanalyzer.getStoreColumns(tableElement);
+			for(ColumnInfo columnInfo : columns){
+				Document tabledoc = new Document();
+				if(!storeColumns.contains(columnInfo.getName())){
+    				//分词,使用textfield
+    	    		tabledoc.add(fieldUtil.textField(columnInfo.getName(), columnInfo.getValue(), storeType));
+    			}else{
+    				//不分词，如果是char类型那就用stringfield,如果是integer那就使用storedfield
+    				if(columnInfo.getType().toLowerCase().equals("char")||columnInfo.getType().toLowerCase().equals("varchar")){
+    					tabledoc.add(fieldUtil.stringField(columnInfo.getName(), columnInfo.getValue(), storeType));
+    				}else{
+    					if(columnInfo.getType().toLowerCase().equals("integer")){
+    						tabledoc.add(fieldUtil.stringField(columnInfo.getName(), columnInfo.getValue(),storeType));
+    					}
+    				}
+    			}
+				indexwriter.addDocument(tabledoc);
+    		}
+			indexwriter.commit();
+			indexwriter.close();
+			directory.close();
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
     }
-    
 }

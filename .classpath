@@ -30,5 +30,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="E:/毕业设计-Lucene全文检索/tika-core-1.7.jar"/>
+	<classpathentry kind="lib" path="E:/毕业设计-Lucene全文检索/commons-io-2.5/commons-io-2.5.jar"/>
+	<classpathentry kind="lib" path="E:/myeclipseWorkSpace/forum02/WebRoot/WEB-INF/lib/json-lib-2.2.3-jdk15.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

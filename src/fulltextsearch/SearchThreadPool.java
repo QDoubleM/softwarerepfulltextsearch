@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import Utils.SearchContent;
+import Utils.TableColumns;
 
 public class SearchThreadPool {
 	private SearchContent searchContent;
@@ -31,7 +32,7 @@ public class SearchThreadPool {
 	
 	public void exec() throws Exception {
 		// 进行异步任务列表
-		List<FutureTask<Integer>> futureTasks = new ArrayList<FutureTask<Integer>>();
+		List<FutureTask<List<TableColumns>>> futureTasks = new ArrayList<FutureTask<List<TableColumns>>>();
 		ExecutorService executorService = Executors.newFixedThreadPool(30);
 		long start = System.currentTimeMillis();        
 		
@@ -39,22 +40,17 @@ public class SearchThreadPool {
 		for(SearchContent searchContent:searchContentList){
 			SearchThread searchThread = new SearchThread();
 			searchThread.setSearchContent(searchContent);
-			FutureTask<Integer> futureTask = new FutureTask<>(searchThread);
+			FutureTask<List<TableColumns>> futureTask = new FutureTask<>(searchThread);
 			futureTasks.add(futureTask);
 			executorService.submit(futureTask);
 		}
 		
-		/*for (int i = 0; i < 2; i++) {
-			// 创建一个异步任务
-			searchThread.setSearchContent(searchContent);
-			FutureTask<Integer> futureTask = new FutureTask<>(searchThread);
-			futureTasks.add(futureTask);
-			// 提交异步任务到线程池
-			executorService.submit(futureTask);
-		}*/
 		int count = 0;
-		for (FutureTask<Integer> futureTask : futureTasks) {
-			count += futureTask.get();
+		for (FutureTask<List<TableColumns>> futureTask : futureTasks) {
+			List<TableColumns> recordList = futureTask.get();
+			for(int j=0;j<recordList.size();j++){
+				System.out.println(recordList.get(j).getText()+":"+recordList.get(j).getContent());
+			}
 		}
 		long end = System.currentTimeMillis();
 		System.out.println("线程池的任务全部完成:结果为:" + count + "，main线程关闭，进行线程的清理");

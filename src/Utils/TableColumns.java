@@ -1,9 +1,10 @@
 package Utils;
 
 public class TableColumns {
-	String name;
-	String text;
-	Boolean isAnalyzed;
+	private String name;
+	private String text;
+	private Boolean isAnalyzed;
+	private String content;
 	public String getName() {
 		return name;
 	}
@@ -22,5 +23,10 @@ public class TableColumns {
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
 }

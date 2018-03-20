@@ -2,6 +2,7 @@ package fulltextsearch;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
@@ -21,22 +22,15 @@ import org.dom4j.DocumentException;
 
 import Utils.SearchContent;
 import Utils.SearchUtil;
+import Utils.TableColumns;
 
-public class SearchThread implements Callable<Integer> {
-	private ScoreDoc scoredoc;
-	private String indexDir = "E:/lucene/";
+public class SearchThread implements Callable<List<TableColumns>> {
     private SearchContent searchContent;
-    private String content;
-    private String scope;
-    private String field;
-    static SearchUtil searchUtil = new SearchUtil();
+    SearchUtil searchUtil = new SearchUtil();
 	@Override
-	public Integer call() throws Exception {
-		Integer res = new Random().nextInt(100);
-		//System.out.println("任务执行:获取到结果 :" + res);
-		//search("fileindex","filecontents","Lucene");
-		multiTableSearch();
-		return res;
+	public List<TableColumns> call() throws Exception {
+		List<TableColumns> recordList  = tableSearch();
+		return recordList;
 	}
 	
 	public SearchContent getSearchContent() {
@@ -46,15 +40,12 @@ public class SearchThread implements Callable<Integer> {
 		this.searchContent = searchContent;
 	}
 
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-
-	@SuppressWarnings("static-access")
-	public void multiTableSearch() throws IOException, ParseException, DocumentException{
+	public List<TableColumns> tableSearch() throws IOException, ParseException, DocumentException{
+		
 		String tableName = searchContent.getScope();
 		String queryContent = searchContent.getContent();
-		searchUtil.searchTable(tableName, queryContent);
+		List<TableColumns> recordList = searchUtil.searchTable(tableName, queryContent);
+		return recordList;
 	}
 	
 }

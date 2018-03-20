@@ -42,31 +42,18 @@ public class CDCEvent {
         this.timestampReceipt = header.getTimestampOfReceipt();
         this.position = header.getPosition();
         this.nextPostion = header.getNextPosition();
-        //this.binlogName = header.getBinlogFileName();
     }
 
     @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
-        //builder.append("{ eventId:").append(eventId);
+        builder.append("{ eventId:").append(eventId);
         builder.append(",databaseName:").append(databaseName);
         builder.append(",tableName:").append(tableName);
-        //builder.append(",eventType:").append(eventType);
-       // builder.append(",timestamp:").append(timestamp);
-       // builder.append(",timestampReceipt:").append(timestampReceipt);
-       // builder.append(",binlogName:").append(binlogName);
-       // builder.append(",position:").append(position);
-        //builder.append(",nextPostion:").append(nextPostion);
-        //builder.append(",serverId:").append(serverId);
-        //builder.append(",isDdl:").append(isDdl);
-        //builder.append(",sql:").append(sql);
         builder.append(",before:").append(before);
         builder.append(",after:").append(after).append("}");
-
         return builder.toString();
     }
-// 省略Getter和Setter方法    
-
 	public long getEventId() {
 		return eventId;
 	}
