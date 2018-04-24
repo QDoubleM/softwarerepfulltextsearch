@@ -67,21 +67,18 @@ public class MultiSearcher {//多索引目录搜索
 		IndexReader i1 = reader1; 
 		IndexReader i2 = reader2; 
 		IndexReader i3 = reader3; 
-		//IKAnalyzer analyzer = new IKAnalyzer(true);
-		Analyzer smartAnalyzer = new SmartChineseAnalyzer();
+		IKAnalyzer analyzer = new IKAnalyzer(true);
 		MultiReader multiReader = new MultiReader(i1,i2,i3);
 		long start = System.currentTimeMillis();
 		IndexSearcher indexsearcher = new IndexSearcher(multiReader);
+	
+		BooleanQuery.Builder booleanQuery = searchUtil.multiTableSearch(queryContent);//检索方式
+		TopDocs hits = indexsearcher.search(booleanQuery.build(), 100);//匹配结果
 		
-		//QueryParser parser = new QueryParser("filecontents",smartAnalyzer);
-		//Query query = parser.parse(queryContent);
-		//TopDocs hits = indexsearcher.search(query, 10);//10是查询前10条数据
-		BooleanQuery.Builder booleanQuery = searchUtil.multiTableSearch(queryContent);
-		TopDocs hits = indexsearcher.search(booleanQuery.build(), 100);
+		
+		
 		long end = System.currentTimeMillis();
 		System.out.println("匹配"+queryContent+",总共花费"+(end-start)+"毫秒"+"查询到"+hits.totalHits+"条记录");
-		/*for(ScoreDoc scoredoc:hits.scoreDocs){
-			System.out.println(indexsearcher.doc(scoredoc.doc).get("filecontents"));
-		}*/
+		
 	}
 }
